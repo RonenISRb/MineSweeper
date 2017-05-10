@@ -4,10 +4,16 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
+import { MinesweeperComponent } from '../wixMineSweeper/minesweeper.component';
+import { GameRowComponent } from '../wixMineSweeper/gamerow.component';
+import { GameCellComponent } from '../wixMineSweeper/gamecell.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    MinesweeperComponent,
+    GameRowComponent,
+    GameCellComponent
   ],
   imports: [
     BrowserModule,

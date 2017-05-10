@@ -1,3 +1,11 @@
-<h1>
-  {{title}}
-</h1>
+<!--<label>Rows    :</label><input #rowsNum type="text" value={{gameSettings.rows}} (change)="gameSettings.rows=+rowsNum.value"><br>
+<label>Columns :</label><input #colsNum type="text" value={{gameSettings.cols}} (change)="gameSettings.cols=+colsNum.value"><br>
+<label>Mines   :</label><input #minesNum  type="text" value={{gameSettings.mines}} (change)="gameSettings.mines=+minesNum.value"><br>-->
+<label>Rows    :</label><input #rowsNum type="text" value={{gameSettings.rows}} [(ngModel)]="gameSettings.rows"><br>
+<label>Columns :</label><input #colsNum type="text" value={{gameSettings.cols}} [(ngModel)]="gameSettings.cols"><br>
+<label>Mines   :</label><input #minesNum  type="text" value={{gameSettings.mines}} [(ngModel)]="gameSettings.mines"><br>
+<div *ngIf="!canStart()" [ngStyle]="{color:'red'}">* Can't start a new game, because mines amount is than board dimensions.</div><br>
+<button [disabled]="!canStart()" (click)="startGame()">Start Game</button>
+<input type="checkbox" [(ngModel)]="superManMode" (ngModelChange)="toggleSuperMan()">Super Man
+<p>Remained flags : fill in</p>
+<app-minesweeper [gameManager]="gameManager"></app-minesweeper>

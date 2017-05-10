@@ -1,1 +1,27 @@
+
 /* You can add global styles to this file, and also import other style files */
+.cell{
+  border:1px solid #f0f0f5;
+  color: #7575a3;
+  font-size: 15px;
+  font-weight: bolder;
+  height: 25px;
+  text-align: center;
+  width: 25px;
+}
+
+.cell:hover{
+  color:#a3a3c2
+}
+
+.mine{
+  background: url('../resources/mine.png') center;
+}
+
+.board{ /*change it */
+  background: #1c8c93;
+  border: 10px solid #1f3ea4;
+  border-radius: 10px;
+  display: inline-block;
+  margin: 20px;
+}
