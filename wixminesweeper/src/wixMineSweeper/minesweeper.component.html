@@ -1,0 +1,11 @@
+<div>
+  <label>Super Man Mode</label>
+  <div class="checkbox">
+    <input type="checkbox" [(ngModel)]="superManMode" (change)="superMan()" id="superMan">
+    <label for="superMan"></label>
+  </div>
+</div>
+<label>Remained flags :</label> <label style="color:red;">{{gameManager.flagsLeft}}</label><br>
+<div class="gameBoard" align="center">
+  <app-game-row *ngFor="let row of gameRows" [gameRow]="row" (cellClick)="cellClicked($event)"></app-game-row>
+</div>

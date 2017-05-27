@@ -1,11 +1,18 @@
-<!--<label>Rows    :</label><input #rowsNum type="text" value={{gameSettings.rows}} (change)="gameSettings.rows=+rowsNum.value"><br>
-<label>Columns :</label><input #colsNum type="text" value={{gameSettings.cols}} (change)="gameSettings.cols=+colsNum.value"><br>
-<label>Mines   :</label><input #minesNum  type="text" value={{gameSettings.mines}} (change)="gameSettings.mines=+minesNum.value"><br>-->
-<label>Rows    :</label><input #rowsNum type="text" value={{gameSettings.rows}} [(ngModel)]="gameSettings.rows"><br>
-<label>Columns :</label><input #colsNum type="text" value={{gameSettings.cols}} [(ngModel)]="gameSettings.cols"><br>
-<label>Mines   :</label><input #minesNum  type="text" value={{gameSettings.mines}} [(ngModel)]="gameSettings.mines"><br>
-<div *ngIf="!canStart()" [ngStyle]="{color:'red'}">* Can't start a new game, because mines amount is than board dimensions.</div><br>
-<button [disabled]="!canStart()" (click)="startGame()">Start Game</button>
-<input type="checkbox" [(ngModel)]="superManMode" (ngModelChange)="toggleSuperMan()">Super Man
-<p>Remained flags : fill in</p>
-<app-minesweeper [gameManager]="gameManager"></app-minesweeper>
+<div class="container">
+  <h1 align=center class="gameTitle"> . . Mine Sweeper . . </h1>
+  <div class="row row-content">
+    <div class="col-xs-12 col-sm-4">
+      <label>Rows    :</label><input #rowsNum type="number" min="1" max="300" step="1" [(ngModel)]="gameSettings.rows">
+    </div>
+    <div class="col-xs-12 col-sm-4">
+      <label>Columns    :</label><input #colsNum type="number" min="1" max="300" step="1" [(ngModel)]="gameSettings.cols"><br>
+    </div>
+    <div class="col-xs-12 col-sm-4">
+      <label>Mines    :</label><input #minesNum  type="number" min="1" max="90000" step="1" [(ngModel)]="gameSettings.mines"><br>
+    </div>
+  </div>
+  <div class="warningMessage">{{getMessage()}}</div><br>
+  <button [disabled]="getMessage()!=''" (click)="startGame()" class="btn btn-warning"> Start Game </button>
+</div>
+<app-minesweeper [gameManager]="gameManager" #gameboard></app-minesweeper>
+<h3 align=center class="copyRight">© Copyright 2017 Ronen Butirev</h3>
