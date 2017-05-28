@@ -22,16 +22,28 @@ export class AppComponent implements OnInit {
   }
 
   getMessage(): string {
-    if (this.gameSettings.rows == null || this.gameSettings.cols == null || this.gameSettings.mines == null) {
+    if (this.nullElementsExist()) {
       return ' * Please fill all game settings.';
-    } else if (this.gameSettings.rows < 0 || this.gameSettings.cols < 0  || this.gameSettings.rows > 300 || this.gameSettings.cols > 300) {
+    } else if (!this.inRange(this.gameSettings.rows, 1, 300) || !this.inRange(this.gameSettings.cols, 1, 300)) {
       return ' * Rows and columns  should be in range of [1 , 300].';
-    }else if (this.gameSettings.mines < 0 || this.gameSettings.mines > 90000 ) {
+    }else if (!this.inRange(this.gameSettings.mines, 1, 90000)) {
       return ' * Mines amount should be in range of  [1 , 90000].';
-    } else if (this.gameSettings.mines > this.gameSettings.rows * this.gameSettings.cols) {
+    } else if (!this.correctMinesAmount()) {
       return ' * Amount of mines is more than the board size.';
     }
     return '';
+  }
+
+  nullElementsExist(): boolean {
+    return this.gameSettings.rows == null || this.gameSettings.cols == null || this.gameSettings.mines == null;
+  }
+
+  inRange(setting, min, max): boolean {
+    return setting >= min && setting <= max;
+  }
+
+  correctMinesAmount() {
+    return this.gameSettings.mines <= this.gameSettings.rows * this.gameSettings.cols;
   }
 }
 

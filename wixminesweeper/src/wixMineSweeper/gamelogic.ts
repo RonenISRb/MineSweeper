@@ -1,4 +1,4 @@
-import {duplicateItem, setValueRandomly, add} from './gameutils';
+import {duplicateItem, setValueRandomly} from './gameutils';
 
 export function initGame(gameSettings) {
   return {
@@ -11,30 +11,35 @@ export function initGame(gameSettings) {
 }
 
 function initCells(rows, cols, mines) {
-  const cells = duplicateItem(rows * cols, {openedCell: false, mineCell: false, flaggedCell: false, threatCount: 0});
-  setValueRandomly(mines, cells, 'mineCell', true);
-
-  return cells.map(function (cell, cellNumber) {
-    cell.cellNumber = cellNumber;
-    return cell;
-  });
+   let minesPlaces;
+   const cells = duplicateItem(rows * cols, {openedCell: false, mineCell: false, flaggedCell: false, threatCount: 0});
+   minesPlaces = setValueRandomly(mines, cells, 'mineCell', true);
+   minesPlaces.forEach(function (cell) {
+     getNeighborsCellNumbers(cell, cols, rows * cols).forEach(function (index) {
+       setThreatCount(cells, index, Number(cells[index].threatCount + 1));
+     });
+   });
+   return cells.map(function (cell, cellNumber) {
+     cell.cellNumber = cellNumber;
+     return cell;
+   });
 }
 
 function getNumberOfMineFlaggedCells(gameCells): number {
-    return gameCells.filter(function (item) {
-      return item.mineCell && item.flaggedCell;
-    }).length;
+  return gameCells.filter(function (item) {
+    return item.mineCell && item.flaggedCell;
+  }).length;
 }
 
 export function handleFlagToggled(game, flagsLeft, cellNumber): number {
-   if (isFlagged(game.cells, cellNumber)) {
-    setFlagged(game.cells, cellNumber, false);
-    flagsLeft++;
-   } else {
-     setFlagged(game.cells, cellNumber, true);
-     flagsLeft--;
-   }
-   return flagsLeft;
+ if (isFlagged(game.cells, cellNumber)) {
+  setFlagged(game.cells, cellNumber, false);
+  flagsLeft++;
+ } else {
+   setFlagged(game.cells, cellNumber, true);
+   flagsLeft--;
+ }
+ return flagsLeft;
 }
 
 export function handleOpenCell(game, cellNumber): void {
@@ -47,35 +52,55 @@ export function handleOpenCell(game, cellNumber): void {
 }
 
 function openCurrentCellAndNearPossible(game, cellNumber): void {
-  if (isMineCell(game.cells, cellNumber) || isOpened(game.cells, cellNumber)) {
+  const toCheck = [];
+  if (checkBaseCase(game, cellNumber)) {
     return;
   }
-  const numMines = getMinesAmountAroundCell(game, cellNumber);
-  setThreatCount(game.cells, cellNumber , numMines);
-  setOpened(game.cells, cellNumber, true);
 
-  if (numMines === 0) {
-    getNeighborsCellNumbers(cellNumber, game).map(function(nearCellNumber){
-      openCurrentCellAndNearPossible(game, nearCellNumber);
+  setOpened(game.cells, cellNumber, true);
+  if (!hasMinesAround(game.cells, cellNumber)) {
+    getNeighborsCellNumbers(cellNumber, game.cols, game.cells.length).forEach(function (cell) {
+      toCheck.push(cell);
     });
+  } else {
+    return;
   }
+
+  while (toCheck.length > 0) {
+    const curr = toCheck.pop();
+    if (!checkBaseCase(game, curr) && !hasMinesAround(game.cells, curr)) {
+      getNeighborsCellNumbers(curr, game.cols, game.cells.length).forEach(function (cell) {
+        toCheck.push(cell);
+      });
+    }
+    setOpened(game.cells, curr, true);
+  }
+}
+
+function hasMinesAround(cells, cellNumber): boolean {
+  return cells[cellNumber].threatCount > 0;
+}
+
+function checkBaseCase(game, cellNumber): boolean {
+  return isMineCell(game.cells, cellNumber) || isOpened(game.cells, cellNumber);
 }
 
 export function toggleSuperMan(cells, activate, flaggedPreviously) {
   const flaggedCurrently = [];
-  for (let i = 0; i < cells.length; i++) {
-    if (isMineCell(cells, i)) {
-      if (!isFlagged(cells, i) && flaggedPreviously.indexOf(i) === -1) {
-          setOpened(cells, i, activate);
+  cells.forEach(function (cell) {
+    const cellNum = cell.cellNumber;
+    if (isMineCell(cells, cellNum)) {
+      if (!isFlagged(cells, cellNum) && flaggedPreviously.indexOf(cellNum) === -1) {
+        setOpened(cells, cellNum, activate);
       } else if (activate) {
-          setFlagged(cells, i, false);
-          setOpened(cells, i, true);
-        flaggedCurrently.push(i);
-      } else if (flaggedPreviously.indexOf(i) > -1 ) {
-          setFlagged(cells, i, true);
+        setFlagged(cells, cellNum, false);
+        setOpened(cells, cellNum, true);
+        flaggedCurrently.push(cellNum);
+      } else if (flaggedPreviously.indexOf(cellNum) > -1 ) {
+        setFlagged(cells, cellNum, true);
       }
     }
-  }
+  });
   if (!activate) {
     return flaggedPreviously;
   } else {
@@ -83,20 +108,8 @@ export function toggleSuperMan(cells, activate, flaggedPreviously) {
   }
 }
 
-function getMinesAmountAroundCell(game, cellNumber): number {
-  return getNeighborsCellNumbers(cellNumber, game).map(function(item){
-    if (isMineCell(game.cells, item)) {
-      return 1;
-    }else {
-      return 0;
-    }
-  }).reduce(add, 0);
-}
-
-function getNeighborsCellNumbers(cellNumber, gameBoard): number[] {
+function getNeighborsCellNumbers(cellNumber, colsNum, boardSize): number[] {
   const res = [];
-  const colsNum = gameBoard.cols;
-  const boardSize = gameBoard.cells.length;
 
   if (isUpSafe(cellNumber, colsNum, boardSize)) {
     res.push(cellNumber - colsNum);
@@ -110,7 +123,7 @@ function getNeighborsCellNumbers(cellNumber, gameBoard): number[] {
   if (isLeftSafe(cellNumber, colsNum)) {
     res.push(cellNumber - 1);
   }
-  if (isRighttSafe(cellNumber, colsNum)) {
+  if (isRightSafe(cellNumber, colsNum)) {
     res.push(cellNumber + 1);
   }
   if (isDownSafe(cellNumber, colsNum, boardSize)) {
@@ -141,7 +154,7 @@ function isLeftSafe(cellNumber, colsNum): boolean {
   return !onLeftEdge(cellNumber, colsNum);
 }
 
-function isRighttSafe(cellNumber, colsNum): boolean {
+function isRightSafe(cellNumber, colsNum): boolean {
   return !onRightEdge(cellNumber, colsNum);
 }
 

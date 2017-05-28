@@ -17,6 +17,7 @@ export function setValueRandomly(times, array, key, value) {
       times--;
     }
   }
+  return alreadyGenerated;
 }
 
 export function partition(cols, cells) {
@@ -26,8 +27,4 @@ export function partition(cols, cells) {
     res.push(cells.slice(i * cols, i * cols + cols));
   }
   return res;
-}
-
-export function add(a, b) {
-  return a + b;
 }
