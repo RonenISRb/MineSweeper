@@ -1,10 +1,10 @@
-import { WixminesweeperPage } from './app.po';
+import { MineSweeperPage } from './app.po';
 
 describe('wixminesweeper App', function() {
-  let page: WixminesweeperPage;
+  let page: MineSweeperPage;
 
   beforeEach(() => {
-    page = new WixminesweeperPage();
+    page = new MineSweeperPage();
   });
 
   it('should display message saying app works', () => {

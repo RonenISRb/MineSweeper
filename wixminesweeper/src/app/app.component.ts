@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {initGame} from '../wixMineSweeper/gamelogic';
+import {initGame} from '../MineSweeper/gamelogic';
 
 @Component({
   selector: 'app-root',

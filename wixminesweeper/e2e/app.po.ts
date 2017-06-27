@@ -1,6 +1,6 @@
 import { browser, element, by } from 'protractor';
 
-export class WixminesweeperPage {
+export class MineSweeperPage {
   navigateTo() {
     return browser.get('/');
   }
